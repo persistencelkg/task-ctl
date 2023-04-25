@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.calculate.price.core.repository.dao.tidb.TaskSegementMapper">
+    <resultMap id="BaseResultMap" type="com.calculate.price.core.repository.po.tidb.TaskSegement">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="task_id" property="taskId" jdbcType="VARCHAR"/>
+        <result column="segment_id" property="segmentId" jdbcType="INTEGER"/>
+        <result column="snapshot_value" property="snapshotValue" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="BIT"/>
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="start_index" property="startIndex" jdbcType="INTEGER"/>
+        <result column="end_index" property="endIndex" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, task_id,segment_id, snapshot_value, status, biz_id, start_time,start_index, end_index, end_time,
+        create_time, update_time
+    </sql>
+    <select id="listSegmentWithTaskId" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from task_segement
+        where task_id = #{taskId}
+        order by create_time
+    </select>
+
+    <insert id="insertTaskSegments" parameterType="java.util.List">
+        INSERT INTO task_segement (task_id,segment_id,snapshot_value, status, start_index, end_index, start_time, end_time)
+        VALUES
+        <foreach collection="list" item="taskSegment" separator=",">
+            (#{taskSegment.taskId}, #{taskSegment.segmentId}, #{taskSegment.snapshotValue}, #{taskSegment.status}, #{taskSegment.startIndex},
+            #{taskSegment.endIndex}, #{taskSegment.startTime}, #{taskSegment.endTime})
+        </foreach>
+    </insert>
+
+    <update id="updateByTaskId" parameterType="com.calculate.price.core.repository.po.tidb.TaskSegement">
+        update task_segement
+        <set>
+            <if test="snapshotValue != null">
+                snapshot_value = #{snapshotValue,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=BIT},
+            </if>
+            <if test="startTime != null">
+                start_time = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="endTime != null">
+                end_time = #{endTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where task_id = #{taskId,jdbcType=VARCHAR} and segment_id = #{segmentId}
+    </update>
+</mapper>
