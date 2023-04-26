@@ -1,6 +1,5 @@
 package org.lkg.core.service;
 
-import java.text.MessageFormat;
 
 /**
  * @author likaiguang
